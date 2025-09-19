@@ -10,5 +10,10 @@
     <input type="text" name="task">
     <button type="submit">Submit</button>
   </form>
+  <ul>
+      {% for task in tasks %}
+        <li>{{ task }}</li>
+      {% endfor %}
+  </ul>
 </body>
 </html>

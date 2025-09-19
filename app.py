@@ -38,12 +38,16 @@ app = Flask(__name__)
 @app.route("/", methods=["GET", "POST"])
 def index():
     if request.method == "POST":
-        cursor.execute(
-            """
-        INSERT INTO tasks (task_content)
-        VALUES (%s)
-        """,
-            (request.form["task"],),
-        )
-        cnx.commit()
-    return render_template("index.html")
+        task = request.form["task"].strip()
+        if len(task) != 0:
+            cursor.execute(
+                """
+            INSERT INTO tasks (task_content)
+            VALUES (%s)
+            """,
+                (task,),
+            )
+            cnx.commit()
+    cursor.execute("SELECT task_content FROM tasks")
+    tasks = [row[0] for row in cursor.fetchall()]  # type: ignore
+    return render_template("index.html", tasks=tasks)
