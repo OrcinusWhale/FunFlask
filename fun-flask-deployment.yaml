@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fun-flask-deployment
+  labels:
+    app: fun-flask
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: fun-flask
+  template:
+    metadata:
+      labels:
+        app: fun-flask
+    spec:
+      containers:
+        - name: fun-flask
+          image: orcinuswhale/fun-flask:latest
+          ports:
+            - containerPort: 5000
+          env:
+            - name: MYSQL_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: fun-flask-configmap
+                  key: MYSQL_HOST
+            - name: MYSQL_USER
+              valueFrom:
+                secretKeyRef:
+                  name: fun-flask-secret
+                  key: MYSQL_USER
+            - name: MYSQL_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: fun-flask-secret
+                  key: MYSQL_PASS
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: fun-flask-service
+  labels:
+    app: fun-flask
+spec:
+  type: NodePort
+  selector:
+    app: fun-flask
+  ports:
+    - port: 5000
+      targetPort: 5000
+      protocol: TCP

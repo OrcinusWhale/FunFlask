@@ -1,0 +1,6 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: fun-flask-configmap
+data:
+  MYSQL_HOST: "mysql-service"
